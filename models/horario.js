@@ -19,7 +19,7 @@ const HorarioSchema = new Schema({
     },
     user: {
         type: Schema.ObjectId,
-        ref: 'User',
+        ref: 'user',
     },
 })
 
