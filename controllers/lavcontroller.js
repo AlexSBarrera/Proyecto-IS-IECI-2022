@@ -1,3 +1,4 @@
+const horario = require('../models/horario');
 const Lavadora = require('../models/Lavadora');
 
 // CRUD Lavadoras
@@ -71,5 +72,5 @@ module.exports = {
     getLavadora,
     getSpecificLavadora,
     updateLavadora,
-    deleteLavadora
+    deleteLavadora,
 }
