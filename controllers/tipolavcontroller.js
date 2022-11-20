@@ -27,7 +27,7 @@ const getSpecificTipolavadora = (req, res) => {
     const { id } = req.params
     Tipolavadora.findById(id, (err, Tipolavadora) => {
         if (err) {
-            return res.status(400).send({ message: "No se ha podido buscar lel tipo de lavadora" })
+            return res.status(400).send({ message: "No se ha podido buscar el tipo de lavadora" })
         }
         if (!Tipolavadora) {
             return res.status(404).send({ message: "No se encontro el tipo de lavadora" })

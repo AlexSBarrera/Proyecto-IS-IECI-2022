@@ -32,7 +32,7 @@ const getSpecificStatusHora = (req, res) => {
         if (!StatusHora) {
             return res.status(404).send({ message: "No se encontro el tipo de Status" })
         }
-        return res.status(201).send(StatusHora)
+        return res.status(200).send(StatusHora)
     })
 }
 

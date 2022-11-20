@@ -35,7 +35,7 @@ const getSpecificUser = (req, res) => {
         if (!User) {
             return res.status(404).send({ message: "No se encontro el Usuario" })
         }
-        return res.status(201).send(User)
+        return res.status(200).send(User)
     })
 }
 
