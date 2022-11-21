@@ -66,7 +66,7 @@ const deleteHorario = (req, res) => {
         return res.status(200).send(Horario)
     })
 }
-//
+
 
 
 module.exports = {
@@ -74,5 +74,5 @@ module.exports = {
     getHorario,
     getSpecificHorario,
     updateHorario,
-    deleteHorario
+    deleteHorario,
 }

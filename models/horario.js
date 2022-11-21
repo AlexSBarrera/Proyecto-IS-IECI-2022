@@ -12,6 +12,7 @@ const HorarioSchema = new Schema({
     lavadora: {
         type: Schema.ObjectId,
         ref: 'Lavadora',
+        //required: true
     },
     status: {
         type: Schema.ObjectId,

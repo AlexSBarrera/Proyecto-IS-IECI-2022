@@ -9,6 +9,7 @@ const lavroutes = require("./routes/lavroutes");
 const statushoraroutes = require("./routes/statushoraroutes");
 const horarioroutes = require("./routes/horarioroutes");
 const userroutes = require("./routes/userroutes");
+const helperroutes = require("./routes/helperroutes");
 //const socketio = require('socket.io');
 
 app.use(cors())
@@ -19,6 +20,7 @@ app.use('/api', lavroutes);
 app.use('/api', statushoraroutes);
 app.use('/api', horarioroutes);
 app.use('/api', userroutes);
+app.use('/api', helperroutes);
 
 /*
 io.on('connection', socket => {
