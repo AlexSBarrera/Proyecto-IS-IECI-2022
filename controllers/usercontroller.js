@@ -3,12 +3,13 @@ const User = require('../models/user');
 // CRUD Tipo Usuario
 
 const createUser = (req, res) => {
-    const {name, HorasUso, HorasExtra, correo } = req.body;
+    const {name, HorasUso, HorasExtra, correo, rol } = req.body;
     const newUser = new User({
         name,
         HorasUso,
         HorasExtra,
-        correo
+        correo,
+        rol
     });
     newUser.save((err, User) => {
         if (err) {

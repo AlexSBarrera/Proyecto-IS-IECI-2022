@@ -1,21 +1,34 @@
+const mongoose = require('mongoose');
+const horario = require('../models/horario');
+const { count } = require('../models/horario');
 const Horario = require('../models/horario');
 
 // CRUD Horario
 
-const createHorario = (req, res) => {
-    const { inicio, final, lavadora,status,user } = req.body;
+const createHorario = async (req, res) => {
+    const { dia, inicio, lavadora, status, user } = req.body;
+    const final = parseInt(req.body.inicio) + 1
+    console.log("ini:",req.body.inicio);//testeo recuerda borrar
+    console.log("fin:",final);//testeo recuerda borrar
     const newHorario = new Horario({
+        dia,
         inicio,
-        final,
+        final : final,
         lavadora,
         status,
         user
     });
-    newHorario.save((err, Horario) => {
+    console.log("dia:",req.body.dia);//testeo recuerda borrar
+    console.log("ini:",req.body.inicio);//testeo recuerda borrar
+    console.log("req:",req.body);//testeo recuerda borrar
+
+
+    await newHorario.save((err, Horario) => {
         if (err) {
-            return res.status(400).send({ message: "Error al crear el Horario" })
+            console.log("err:",err);//testeo recuerda borrar
+            return res.status(400).send({ message: "Error al crear el Horario" });
         }
-        return res.status(201).send(Horario)
+        return res.status(201).send(Horario);
     })
 }
 const getHorario = (req, res) => {
@@ -37,6 +50,8 @@ const getSpecificHorario = (req, res) => {
         if (!Horario) {
             return res.status(404).send({ message: "Horario no encontrada" })
         }
+        let v = valCreate(Horario);
+        console.log("v if create:",v)
         return res.status(200).send(Horario)
     })
 }
