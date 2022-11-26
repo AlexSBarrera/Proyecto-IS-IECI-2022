@@ -6,6 +6,8 @@ const User = mongoose.model('user');
 // TRABAJO PENDIENTE !!!
 // NO UTILIZAR AUN !!!
 
+
+// FUNCION OBSOLETA!! SOLO REFERENCIA!!
 function sumUser(iduser,uso){
     User.findById(iduser,(err,us) =>{
     if (err) {
@@ -48,7 +50,12 @@ function sumUser(iduser,uso){
             return console.log("0k user")//testeo recuerda borrar
     })
 }
+// FUNCION OBSOLETA!! SOLO REFERENCIA!!
+
+//sum horas
+
 //reservar hora
+// falta verificacion user
 const reserveHorario = (req, res) => {
     console.log("params :",req.params);//testeo recuerda borrar
     console.log("params.id :",req.params.id);//testeo recuerda borrar
@@ -104,8 +111,10 @@ const reserveHorario = (req, res) => {
         return res.status(403).send({ message: "Horario no disponible" })
     })
 }
+
+
 //cancelar hora
-// falta verificacion user 
+// falta verificacion user
 const cancelHorario = (req, res) => {
     ///
     console.log("params :",req.params);//testeo recuerda borrar
@@ -156,14 +165,14 @@ const cancelHorario = (req, res) => {
                 console.log("0k lav")//testeo recuerda borrar
             })
             return res.status(200).send(Ho)
-        
     })
 }
 
 
 
+
 module.exports = {
     reserveHorario,
-    cancelHorario
+    cancelHorario,
 }
 
