@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const horario = require('../models/horario');
-const { count } = require('../models/horario');
 const Horario = require('../models/horario');
 
 // CRUD Horario
@@ -18,6 +17,8 @@ const createHorario = async (req, res) => {
         status,
         user
     });
+    //
+    console.log("Json:",newHorario);//testeo recuerda borrar
     console.log("dia:",req.body.dia);//testeo recuerda borrar
     console.log("ini:",req.body.inicio);//testeo recuerda borrar
     console.log("req:",req.body);//testeo recuerda borrar
@@ -41,8 +42,8 @@ const getHorario = (req, res) => {
 }
 
 const getSpecificHorario = (req, res) => {
-    const { id } = req.params;
-    Horario.findById(id).populate({ path: 'lavadora' }).populate({path: 'status'}).populate({path: 'user'}).exec((err, Horario) => {
+    const  id  = req.params.id;
+    Horario.findById(id).populate({ path: 'lavadora' }).populate({path: 'user'}).exec((err, Horario) => {
         if (err) {
             console.log(err);
             return res.status(400).send({ message: "Error al obtener el Horario" })
@@ -50,8 +51,6 @@ const getSpecificHorario = (req, res) => {
         if (!Horario) {
             return res.status(404).send({ message: "Horario no encontrada" })
         }
-        let v = valCreate(Horario);
-        console.log("v if create:",v)
         return res.status(200).send(Horario)
     })
 }

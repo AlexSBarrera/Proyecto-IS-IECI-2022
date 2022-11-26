@@ -19,15 +19,15 @@ const HorarioSchema = new Schema({
         ref: 'Lavadora',
         required: true
     },
-    status: {
-        type: String,
-        required : true,
-        default : "Libre"
-    },
     user: {
         type: Schema.ObjectId,
         ref: 'user'
     },
+    status: {
+        type: String,
+        required : true,
+        default : "Libre"
+    }
 })
 
 HorarioSchema.index({dia: 1,inicio: 1,lavadora: 1},{unique : true})
