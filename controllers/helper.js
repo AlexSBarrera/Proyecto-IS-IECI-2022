@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const Horario = require('../models/horario');
+const reghora = require('../models/reghora');
 const Lavadora = mongoose.model('Lavadora');
 const User = mongoose.model('user');
+const RegHora = mongoose.model('RegHora');
 
 // TRABAJO PENDIENTE !!!
 // NO UTILIZAR AUN !!!
@@ -56,7 +58,7 @@ function sumUser(iduser,uso){
 
 //reservar hora
 // falta verificacion user
-const reserveHorario = (req, res) => {
+const reserveHorario = async(req, res) => {
     console.log("params :",req.params);//testeo recuerda borrar
     console.log("params.id :",req.params.id);//testeo recuerda borrar
     console.log("params.uid :",req.params.uid);//testeo recuerda borrar
@@ -71,16 +73,27 @@ const reserveHorario = (req, res) => {
         }
         console.log("inicio :",Ho.status);//testeo recuerda borrar
         if(Ho.status == "Libre"){
+
+            //test start
             console.log("entra");//testeo recuerda borrar
             console.log("ho :",Ho);//testeo recuerda borrar
             console.log("Lav.id :",Ho.lavadora.id);//testeo recuerda borrar
+            console.log("idtipo :",Ho.lavadora.tipo);//testeo recuerda borrar
             console.log("final :",Ho.final);//testeo recuerda borrar
             console.log("inicio :",Ho.inicio);//testeo recuerda borrar
+            //test end
+
             const  idlav  = Ho.lavadora.id;
             const  iduser  = req.params.uid;
+            const  idtipo  = Ho.lavadora.tipo;
             let uso = Ho.final - Ho.inicio
+
+            //test start
             console.log("Lav.id :",iduser);//testeo recuerda borrar
+            console.log("idtipo :",idtipo);//testeo recuerda borrar
             console.log("uso :",uso);//testeo recuerda borrar
+            //test end
+
         // suma horas a lavadora
         Lavadora.findByIdAndUpdate(idlav,{$inc:{ usohoras : uso} },(err,Lav) =>{
             if (err) {
@@ -94,18 +107,46 @@ const reserveHorario = (req, res) => {
                 console.log(err);//testeo recuerda borrar
                 console.log("0k lav")//testeo recuerda borrar
             })
-            Horario.findByIdAndUpdate(ida,{ user : iduser, status : "Reservado"},(err,Lav) =>{
+            Horario.findByIdAndUpdate(ida,{ user : iduser, status : "Reservado"},(err,Ho) =>{
                 if (err) {
                     console.log(err);//testeo recuerda borrar
                     return res.status(400).send({ message: "Error al obtener la Lavadora" })
                 }
-                if (!Lav) {
+                if (!Ho) {
                     console.log(err);//testeo recuerda borrar
                     return res.status(404).send({ message: "Lavadora no encontrado" })
                 }
                 console.log(err);//testeo recuerda borrar
                 console.log("0k User")//testeo recuerda borrar
             })
+            RegHora.findOneAndUpdate({user : iduser , tipo : idtipo },{ $inc:{ Horas : uso}}, (err,Reg) =>{
+                if (err) {
+                    console.log(err);//testeo recuerda borrar
+                    return res.status(400).send({ message: "Error al obtener el Registro" })
+                }
+                if (!Reg) {
+
+                    const newRegHora = new RegHora({
+                        user : iduser,
+                        tipo : idtipo,
+                        Horas : uso
+                    });
+                    console.log("RegHora :",newRegHora);//testeo recuerda borrar
+                    newRegHora.save((err) => {
+                        if (err) {
+
+                            console.log("reg E1 ",err);
+                            return res.status(400).send({ message: "Error al crear el Registro de Horas" })
+                        }
+                        console.log("RegHora created:",newRegHora);//testeo recuerda borrar
+                    })
+                    console.log(err);//testeo recuerda borrar
+                   //return res.status(404).send({ message: "Registro no encontrado" })
+                }
+                console.log(err);//testeo recuerda borrar
+                console.log("0k Reg")//testeo recuerda borrar
+            })
+            console.log("Enviado")//testeo recuerda borrar
             return res.status(200).send(Ho)
         }
         return res.status(403).send({ message: "Horario no disponible" })
@@ -115,8 +156,9 @@ const reserveHorario = (req, res) => {
 
 //cancelar hora
 // falta verificacion user
-const cancelHorario = (req, res) => {
+const cancelHorario = async (req, res) => {
     ///
+    //test start
     console.log("params :",req.params);//testeo recuerda borrar
     console.log("params.id :",req.params.id);//testeo recuerda borrar
     console.log("params.uid :",req.params.uid);//testeo recuerda borrar
@@ -129,50 +171,186 @@ const cancelHorario = (req, res) => {
         if (!Ho) {
             return res.status(404).send({ message: "Horario no encontrada" })
         }
+
+        const  idlav  = Ho.lavadora.id;
+        const  iduser  = req.params.uid;
+        const  idtipo  = Ho.lavadora.tipo;
+        let uso = Ho.final - Ho.inicio
+
+        let val= RegHora.findOne({user : iduser , tipo : idtipo },(err, Reg) => {
+            if (err) {
+                console.log("Reg E1 ",err);//testeo recuerda borrar
+                return res.status(400).send({ message: "Error al obtener el Registro" })
+            }
+            if (!Reg) {
+                console.log("Reg E2 ",err);//testeo recuerda borrar
+                return res.status(404).send({ message: "Registro no encontrado" })
+            }
+            console.log("Reg : ", Reg);//testeo recuerda borrar
+            return Reg
+        })
+
+        if(Ho.status == "Reservado" && val != null ){
+
+        //test start
             console.log("entra");//testeo recuerda borrar
             console.log("ho :",Ho);//testeo recuerda borrar
             console.log("Lav.id :",Ho.lavadora.id);//testeo recuerda borrar
+            console.log("idtipo :",Ho.lavadora.tipo);//testeo recuerda borrar
             console.log("final :",Ho.final);//testeo recuerda borrar
             console.log("inicio :",Ho.inicio);//testeo recuerda borrar
-            const  idlav  = Ho.lavadora.id;
-            const  iduser  = req.params.uid;
-            let uso = Ho.final - Ho.inicio
             console.log("Lav.id :",iduser);//testeo recuerda borrar
             console.log("uso :",uso);//testeo recuerda borrar
+            console.log("idtipo :",idtipo);//testeo recuerda borrar
+        //test end
+
         // suma horas a lavadora
         Lavadora.findByIdAndUpdate(idlav,{$inc:{ usohoras : -uso} },(err,Lav) =>{
             if (err) {
-                console.log(err);//testeo recuerda borrar
+                console.log("la E ",err);//testeo recuerda borrar
                 return res.status(400).send({ message: "Error al obtener la Lavadora" })
             }
             if (!Lav) {
-                console.log(err);//testeo recuerda borrar
+                console.log("ho E ",err);//testeo recuerda borrar
                 return res.status(404).send({ message: "Lavadora no encontrado" })
             }
-                console.log(err);//testeo recuerda borrar
+                console.log("la E ",err);//testeo recuerda borrar
                 console.log("0k lav")//testeo recuerda borrar
             })
-            Horario.findByIdAndUpdate(ida,{ user : null, status : "Libre"}, (err,Lav) =>{
+        Horario.findByIdAndUpdate(ida,{ user : null, status : "Libre"},(err,Ho) =>{
+            if (err) {
+                console.log("ho E ",err);//testeo recuerda borrar
+                return res.status(400).send({ message: "Error al obtener la Lavadora" })
+            }
+            if (!Ho) {
+                console.log("ho E ",err);//testeo recuerda borrar
+                return res.status(404).send({ message: "Lavadora no encontrado" })
+            }
+            console.log(err);//testeo recuerda borrar
+            console.log("0k User")//testeo recuerda borrar
+            })
+
+
+            RegHora.findOneAndUpdate({user : iduser , tipo : idtipo },{ $inc:{ Horas : -uso}}, (err,Reg) =>{
                 if (err) {
                     console.log(err);//testeo recuerda borrar
-                    return res.status(400).send({ message: "Error al obtener la Lavadora" })
+                    return res.status(400).send({ message: "Error al obtener el Registro" })
                 }
-                if (!Lav) {
+                if (!Reg) {//
                     console.log(err);//testeo recuerda borrar
-                    return res.status(404).send({ message: "Lavadora no encontrado" })
+                   // return res.status(404).send({ message: "Registro no encontrado" })
                 }
                 console.log(err);//testeo recuerda borrar
-                console.log("0k lav")//testeo recuerda borrar
+                console.log("0k Reg")//testeo recuerda borrar
             })
+            console.log("Enviado")//testeo recuerda borrar
             return res.status(200).send(Ho)
+        }
+        return res.status(404).send({ message: "Sin Horario" })
     })
 }
 
+
+const deshaHorario = async (req, res) => {
+    ///
+    //test start
+    console.log("params :",req.params);//testeo recuerda borrar
+    console.log("params.id :",req.params.id);//testeo recuerda borrar
+    const ida  = req.params.id;
+    Horario.findById(ida).populate({ path: 'lavadora' }).exec((err, Ho) => {
+        if (err) {
+            console.log(err);//testeo recuerda borrar
+            return res.status(400).send({ message: "Error al obtener el Horario" })
+        }
+        if (!Ho) {
+            return res.status(404).send({ message: "Horario no encontrada" })
+        }
+        console.log("Ho : ", Ho);//testeo recuerda borrar
+
+        const  idlav  = Ho.lavadora.id;
+        const  iduser  = Ho.user;
+        const  idtipo  = Ho.lavadora.tipo;
+        let uso = Ho.final - Ho.inicio
+
+        let val= RegHora.findOne({user : iduser , tipo : idtipo },(err, Reg) => {
+            if (err) {
+                console.log("Reg E1 ",err);//testeo recuerda borrar
+                return res.status(400).send({ message: "Error al obtener el Registro" })
+            }
+            if (!Reg) {
+                console.log("Sin Registro",err);//testeo recuerda borrar
+                }
+            console.log("Reg : ", Reg);//testeo recuerda borrar
+            return Reg
+        })
+
+        if(Ho.status != "Deshabilitado"  ){
+
+        //test start
+            console.log("entra");//testeo recuerda borrar
+            console.log("ho :",Ho);//testeo recuerda borrar
+            console.log("Lav.id :",Ho.lavadora.id);//testeo recuerda borrar
+            console.log("idtipo :",Ho.lavadora.tipo);//testeo recuerda borrar
+            console.log("final :",Ho.final);//testeo recuerda borrar
+            console.log("inicio :",Ho.inicio);//testeo recuerda borrar
+            console.log("user.id :",iduser);//testeo recuerda borrar
+            console.log("uso :",uso);//testeo recuerda borrar
+            console.log("idtipo :",idtipo);//testeo recuerda borrar
+        //test end
+        if (!val){
+                // suma horas a lavadora
+            Lavadora.findByIdAndUpdate(idlav,{$inc:{ usohoras : -uso} },(err,Lav) =>{
+            if (err) {
+                console.log("la E ",err);//testeo recuerda borrar
+                return res.status(400).send({ message: "Error al obtener la Lavadora" })
+            }
+            if (!Lav) {
+                console.log("ho E ",err);//testeo recuerda borrar
+                return res.status(404).send({ message: "Lavadora no encontrado" })
+            }
+                console.log("0k lav")//testeo recuerda borrar
+            })
+
+
+            RegHora.findOneAndUpdate({user : iduser , tipo : idtipo },{ $inc:{ Horas : -uso}}, (err,Reg) =>{
+                if (err) {
+                    console.log(err);//testeo recuerda borrar
+                    return res.status(400).send({ message: "Error al obtener el Registro" })
+                }
+                if (!Reg) {//
+                    console.log(err);//testeo recuerda borrar
+                   // return res.status(404).send({ message: "Registro no encontrado" })
+                }
+                console.log(err);//testeo recuerda borrar
+                console.log("0k Reg")//testeo recuerda borrar
+            })
+            }
+
+        Horario.findByIdAndUpdate(ida,{status : "Deshabilitado"},(err,Ho) =>{
+            if (err) {
+                console.log("ho E ",err);//testeo recuerda borrar
+                return res.status(400).send({ message: "Error al obtener la Lavadora" })
+            }
+            if (!Ho) {
+                console.log("ho E ",err);//testeo recuerda borrar
+                return res.status(404).send({ message: "Lavadora no encontrado" })
+            }
+            console.log("0k User")//testeo recuerda borrar
+            })
+
+
+            console.log("Enviado")//testeo recuerda borrar
+            return res.status(200).send(Ho)
+        }
+        return res.status(404).send({ message: "Sin Horario" })
+    })
+}
 
 
 
 module.exports = {
     reserveHorario,
     cancelHorario,
+    deshaHorario
 }
 

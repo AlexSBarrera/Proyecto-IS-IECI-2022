@@ -2,12 +2,13 @@ const RegHora = require('../models/reghora');
 
 // CRUD RegHora
 
-const createRegHora = (req, res) => {
-    const {user} = req.body;
+const createRegHora = async (req, res) => {
+    const {user, tipo} = req.body;
     const newRegHora = new RegHora({
-            user
+        user,
+        tipo
     });
-    newRegHora.save((err, RegHora) => {
+    await newRegHora.save((err, RegHora) => {
         if (err) {
             return res.status(400).send({ message: "Error al crear el Registro de Horas" })
         }
@@ -25,8 +26,9 @@ const getRegHora = (req, res) => {
 
 const getSpecificRegHora = (req, res) => {
     const { id } = req.params
-    RegHora.findById(id, (err, RegHora) => {
+    RegHora.findById(id).populate({ path: 'user' }).populate({path: 'tipo'}).exec((err, RegHora) => {
         if (err) {
+            console.log(err);
             return res.status(400).send({ message: "No se ha podido buscar el Registro de Horas" })
         }
         if (!RegHora) {
