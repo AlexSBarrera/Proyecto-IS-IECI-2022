@@ -8,7 +8,7 @@ const RegHoraSchema = new Schema({
     },
     tipo: {
         type: Schema.ObjectId,
-        ref : 'Tipolavadora',
+        ref : "tipoMaquina",
         required: true
     },
     Horas: {

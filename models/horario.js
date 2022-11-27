@@ -14,9 +14,9 @@ const HorarioSchema = new Schema({
         type: Number,
         required: true
     },
-    lavadora: {
+    Maquina: {
         type: Schema.ObjectId,
-        ref: 'Lavadora',
+        ref: 'Maquina',
         required: true
     },
     user: {
@@ -31,6 +31,6 @@ const HorarioSchema = new Schema({
     }
 })
 
-HorarioSchema.index({dia: 1,inicio: 1,lavadora: 1},{unique : true})
+HorarioSchema.index({dia: 1,inicio: 1,Maquina: 1},{unique : true})
 
 module.exports = mongoose.model('Horario', HorarioSchema);

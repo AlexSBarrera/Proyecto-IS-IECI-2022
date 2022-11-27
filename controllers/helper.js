@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Horario = require('../models/horario');
 const reghora = require('../models/reghora');
-const Lavadora = mongoose.model('Lavadora');
+const Maquina = mongoose.model('Maquina');
 const User = mongoose.model('user');
 const RegHora = mongoose.model('RegHora');
 
@@ -14,11 +14,11 @@ function sumUser(iduser,uso){
     User.findById(iduser,(err,us) =>{
     if (err) {
             console.log(err);//testeo recuerda borrar
-            return res.status(400).send({ message: "Error al obtener la Lavadora" })
+            return res.status(400).send({ message: "Error al obtener la Maquina" })
         }
     if (!us) {
             console.log(err);//testeo recuerda borrar
-            return res.status(404).send({ message: "Lavadora no encontrado" })
+            return res.status(404).send({ message: "Maquina no encontrado" })
         }
         console.log(err);//testeo recuerda borrar
         const  difu  = 12 - us.HorasUso;
@@ -63,7 +63,7 @@ const reserveHorario = async(req, res) => {
     console.log("params.id :",req.params.id);//testeo recuerda borrar
     console.log("params.uid :",req.params.uid);//testeo recuerda borrar
     const ida  = req.params.id;
-    Horario.findById(ida).populate({ path: 'lavadora' }).populate({path: 'user'}).exec((err, Ho) => {
+    Horario.findById(ida).populate({ path: 'Maquina' }).populate({path: 'user'}).exec((err, Ho) => {
         if (err) {
             console.log(err);//testeo recuerda borrar
             return res.status(400).send({ message: "Error al obtener el Horario" })
@@ -77,44 +77,44 @@ const reserveHorario = async(req, res) => {
             //test start
             console.log("entra");//testeo recuerda borrar
             console.log("ho :",Ho);//testeo recuerda borrar
-            console.log("Lav.id :",Ho.lavadora.id);//testeo recuerda borrar
-            console.log("idtipo :",Ho.lavadora.tipo);//testeo recuerda borrar
+            console.log("maq.id :",Ho.Maquina.id);//testeo recuerda borrar
+            console.log("idtipo :",Ho.Maquina.tipo);//testeo recuerda borrar
             console.log("final :",Ho.final);//testeo recuerda borrar
             console.log("inicio :",Ho.inicio);//testeo recuerda borrar
             //test end
 
-            const  idlav  = Ho.lavadora.id;
+            const  idmaq  = Ho.Maquina.id;
             const  iduser  = req.params.uid;
-            const  idtipo  = Ho.lavadora.tipo;
+            const  idtipo  = Ho.Maquina.tipo;
             let uso = Ho.final - Ho.inicio
 
             //test start
-            console.log("Lav.id :",iduser);//testeo recuerda borrar
+            console.log("maq.id :",iduser);//testeo recuerda borrar
             console.log("idtipo :",idtipo);//testeo recuerda borrar
             console.log("uso :",uso);//testeo recuerda borrar
             //test end
 
-        // suma horas a lavadora
-        Lavadora.findByIdAndUpdate(idlav,{$inc:{ usohoras : uso} },(err,Lav) =>{
+        // suma horas a Maquina
+        Maquina.findByIdAndUpdate(idmaq,{$inc:{ usohoras : uso} },(err,maq) =>{
             if (err) {
                 console.log(err);//testeo recuerda borrar
-                return res.status(400).send({ message: "Error al obtener la Lavadora" })
+                return res.status(400).send({ message: "Error al obtener la Maquina" })
             }
-            if (!Lav) {
+            if (!maq) {
                 console.log(err);//testeo recuerda borrar
-                return res.status(404).send({ message: "Lavadora no encontrado" })
+                return res.status(404).send({ message: "Maquina no encontrado" })
             }
                 console.log(err);//testeo recuerda borrar
-                console.log("0k lav")//testeo recuerda borrar
+                console.log("0k maq")//testeo recuerda borrar
             })
             Horario.findByIdAndUpdate(ida,{ user : iduser, status : "Reservado"},(err,Ho) =>{
                 if (err) {
                     console.log(err);//testeo recuerda borrar
-                    return res.status(400).send({ message: "Error al obtener la Lavadora" })
+                    return res.status(400).send({ message: "Error al obtener la Maquina" })
                 }
                 if (!Ho) {
                     console.log(err);//testeo recuerda borrar
-                    return res.status(404).send({ message: "Lavadora no encontrado" })
+                    return res.status(404).send({ message: "Maquina no encontrado" })
                 }
                 console.log(err);//testeo recuerda borrar
                 console.log("0k User")//testeo recuerda borrar
@@ -163,7 +163,7 @@ const cancelHorario = async (req, res) => {
     console.log("params.id :",req.params.id);//testeo recuerda borrar
     console.log("params.uid :",req.params.uid);//testeo recuerda borrar
     const ida  = req.params.id;
-    Horario.findById(ida).populate({ path: 'lavadora' }).populate({path: 'user'}).exec((err, Ho) => {
+    Horario.findById(ida).populate({ path: 'Maquina' }).populate({path: 'user'}).exec((err, Ho) => {
         if (err) {
             console.log(err);//testeo recuerda borrar
             return res.status(400).send({ message: "Error al obtener el Horario" })
@@ -172,9 +172,9 @@ const cancelHorario = async (req, res) => {
             return res.status(404).send({ message: "Horario no encontrada" })
         }
 
-        const  idlav  = Ho.lavadora.id;
+        const  idmaq  = Ho.Maquina.id;
         const  iduser  = req.params.uid;
-        const  idtipo  = Ho.lavadora.tipo;
+        const  idtipo  = Ho.Maquina.tipo;
         let uso = Ho.final - Ho.inicio
 
         let val= RegHora.findOne({user : iduser , tipo : idtipo },(err, Reg) => {
@@ -195,36 +195,36 @@ const cancelHorario = async (req, res) => {
         //test start
             console.log("entra");//testeo recuerda borrar
             console.log("ho :",Ho);//testeo recuerda borrar
-            console.log("Lav.id :",Ho.lavadora.id);//testeo recuerda borrar
-            console.log("idtipo :",Ho.lavadora.tipo);//testeo recuerda borrar
+            console.log("maq.id :",Ho.Maquina.id);//testeo recuerda borrar
+            console.log("idtipo :",Ho.Maquina.tipo);//testeo recuerda borrar
             console.log("final :",Ho.final);//testeo recuerda borrar
             console.log("inicio :",Ho.inicio);//testeo recuerda borrar
-            console.log("Lav.id :",iduser);//testeo recuerda borrar
+            console.log("maq.id :",iduser);//testeo recuerda borrar
             console.log("uso :",uso);//testeo recuerda borrar
             console.log("idtipo :",idtipo);//testeo recuerda borrar
         //test end
 
-        // suma horas a lavadora
-        Lavadora.findByIdAndUpdate(idlav,{$inc:{ usohoras : -uso} },(err,Lav) =>{
+        // suma horas a Maquina
+        Maquina.findByIdAndUpdate(idmaq,{$inc:{ usohoras : -uso} },(err,maq) =>{
             if (err) {
                 console.log("la E ",err);//testeo recuerda borrar
-                return res.status(400).send({ message: "Error al obtener la Lavadora" })
+                return res.status(400).send({ message: "Error al obtener la Maquina" })
             }
-            if (!Lav) {
+            if (!maq) {
                 console.log("ho E ",err);//testeo recuerda borrar
-                return res.status(404).send({ message: "Lavadora no encontrado" })
+                return res.status(404).send({ message: "Maquina no encontrado" })
             }
                 console.log("la E ",err);//testeo recuerda borrar
-                console.log("0k lav")//testeo recuerda borrar
+                console.log("0k maq")//testeo recuerda borrar
             })
         Horario.findByIdAndUpdate(ida,{ user : null, status : "Libre"},(err,Ho) =>{
             if (err) {
                 console.log("ho E ",err);//testeo recuerda borrar
-                return res.status(400).send({ message: "Error al obtener la Lavadora" })
+                return res.status(400).send({ message: "Error al obtener la Maquina" })
             }
             if (!Ho) {
                 console.log("ho E ",err);//testeo recuerda borrar
-                return res.status(404).send({ message: "Lavadora no encontrado" })
+                return res.status(404).send({ message: "Maquina no encontrado" })
             }
             console.log(err);//testeo recuerda borrar
             console.log("0k User")//testeo recuerda borrar
@@ -257,7 +257,7 @@ const deshaHorario = async (req, res) => {
     console.log("params :",req.params);//testeo recuerda borrar
     console.log("params.id :",req.params.id);//testeo recuerda borrar
     const ida  = req.params.id;
-    Horario.findById(ida).populate({ path: 'lavadora' }).exec((err, Ho) => {
+    Horario.findById(ida).populate({ path: 'Maquina' }).exec((err, Ho) => {
         if (err) {
             console.log(err);//testeo recuerda borrar
             return res.status(400).send({ message: "Error al obtener el Horario" })
@@ -267,9 +267,9 @@ const deshaHorario = async (req, res) => {
         }
         console.log("Ho : ", Ho);//testeo recuerda borrar
 
-        const  idlav  = Ho.lavadora.id;
+        const  idmaq  = Ho.Maquina.id;
         const  iduser  = Ho.user;
-        const  idtipo  = Ho.lavadora.tipo;
+        const  idtipo  = Ho.Maquina.tipo;
         let uso = Ho.final - Ho.inicio
 
         let val= RegHora.findOne({user : iduser , tipo : idtipo },(err, Reg) => {
@@ -289,8 +289,8 @@ const deshaHorario = async (req, res) => {
         //test start
             console.log("entra");//testeo recuerda borrar
             console.log("ho :",Ho);//testeo recuerda borrar
-            console.log("Lav.id :",Ho.lavadora.id);//testeo recuerda borrar
-            console.log("idtipo :",Ho.lavadora.tipo);//testeo recuerda borrar
+            console.log("maq.id :",Ho.Maquina.id);//testeo recuerda borrar
+            console.log("idtipo :",Ho.Maquina.tipo);//testeo recuerda borrar
             console.log("final :",Ho.final);//testeo recuerda borrar
             console.log("inicio :",Ho.inicio);//testeo recuerda borrar
             console.log("user.id :",iduser);//testeo recuerda borrar
@@ -298,17 +298,17 @@ const deshaHorario = async (req, res) => {
             console.log("idtipo :",idtipo);//testeo recuerda borrar
         //test end
         if (!val){
-                // suma horas a lavadora
-            Lavadora.findByIdAndUpdate(idlav,{$inc:{ usohoras : -uso} },(err,Lav) =>{
+                // suma horas a Maquina
+            Maquina.findByIdAndUpdate(idmaq,{$inc:{ usohoras : -uso} },(err,maq) =>{
             if (err) {
                 console.log("la E ",err);//testeo recuerda borrar
-                return res.status(400).send({ message: "Error al obtener la Lavadora" })
+                return res.status(400).send({ message: "Error al obtener la Maquina" })
             }
-            if (!Lav) {
+            if (!maq) {
                 console.log("ho E ",err);//testeo recuerda borrar
-                return res.status(404).send({ message: "Lavadora no encontrado" })
+                return res.status(404).send({ message: "Maquina no encontrado" })
             }
-                console.log("0k lav")//testeo recuerda borrar
+                console.log("0k maq")//testeo recuerda borrar
             })
 
 
@@ -329,11 +329,11 @@ const deshaHorario = async (req, res) => {
         Horario.findByIdAndUpdate(ida,{status : "Deshabilitado"},(err,Ho) =>{
             if (err) {
                 console.log("ho E ",err);//testeo recuerda borrar
-                return res.status(400).send({ message: "Error al obtener la Lavadora" })
+                return res.status(400).send({ message: "Error al obtener la Maquina" })
             }
             if (!Ho) {
                 console.log("ho E ",err);//testeo recuerda borrar
-                return res.status(404).send({ message: "Lavadora no encontrado" })
+                return res.status(404).send({ message: "Maquina no encontrado" })
             }
             console.log("0k User")//testeo recuerda borrar
             })

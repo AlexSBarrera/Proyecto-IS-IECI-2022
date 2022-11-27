@@ -4,8 +4,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const tipolavroutes = require("./routes/tipolavroutes");
-const lavroutes = require("./routes/lavroutes");
+const tipomaqroutes = require("./routes/tipomaqroutes");
+const maqroutes = require("./routes/maqroutes");
 const reghoraroutes = require("./routes/reghoraroutes");
 const horarioroutes = require("./routes/horarioroutes");
 const userroutes = require("./routes/userroutes");
@@ -15,8 +15,8 @@ const helperroutes = require("./routes/helperroutes");
 app.use(cors())
 app.use(express.json());
 app.options('*', cors());
-app.use('/api', tipolavroutes);
-app.use('/api', lavroutes);
+app.use('/api', tipomaqroutes);
+app.use('/api', maqroutes);
 app.use('/api', reghoraroutes);
 app.use('/api', horarioroutes);
 app.use('/api', userroutes);

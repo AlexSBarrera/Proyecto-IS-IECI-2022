@@ -5,7 +5,7 @@ const Horario = require('../models/horario');
 // CRUD Horario
 
 const createHorario = async (req, res) => {
-    const { dia, inicio, lavadora, status, user } = req.body;
+    const { dia, inicio, Maquina, status, user } = req.body;
     const final = parseInt(req.body.inicio) + 1
     console.log("ini:",req.body.inicio);//testeo recuerda borrar
     console.log("fin:",final);//testeo recuerda borrar
@@ -13,7 +13,7 @@ const createHorario = async (req, res) => {
         dia,
         inicio,
         final : final,
-        lavadora,
+        Maquina,
         status,
         user
     });
@@ -43,7 +43,7 @@ const getHorario = (req, res) => {
 
 const getSpecificHorario = (req, res) => {
     const  id  = req.params.id;
-    Horario.findById(id).populate({ path: 'lavadora' }).populate({path: 'user'}).exec((err, Horario) => {
+    Horario.findById(id).populate({ path: 'Maquina' }).populate({path: 'user'}).exec((err, Horario) => {
         if (err) {
             console.log(err);
             return res.status(400).send({ message: "Error al obtener el Horario" })
