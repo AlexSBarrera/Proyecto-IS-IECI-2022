@@ -1,23 +1,50 @@
-const User = require('../models/user');
+const mongoose = require('mongoose');
+const user = require('../models/user');
+const service = require('../services');
 
 // CRUD Tipo Usuario
 
+
 const createUser = (req, res) => {
-    const {name, HorasUso, HorasExtra, correo, rol } = req.body;
-    const newUser = new User({
-        name,
-        HorasUso,
-        HorasExtra,
-        correo,
-        rol
-    });
-    newUser.save((err, User) => {
-        if (err) {
-            return res.status(400).send({ message: "Error al crear el Usuario" })
-        }
-        return res.status(201).send(User)
+    const {name, correo, contraseña, admin} = req.body;
+    const user = new user({name, correo, contraseña, admin});
+    user.save((err, user) => {
+        if (err) return res.status(500).send({message: `Error al crear el usuario: ${err}`})
+        return res.status(200).send({token: service.createToken(user)})
     })
 }
+
+
+/*function signup(req, res) {
+    const user = new User({
+        name: req.body.name,
+        correo: req.body.correo,
+        contraseña: req.body.contraseña,
+        admin: false
+    })
+
+    user.save((err) => {
+        if (err) res.status(500).send({ message: `Error al crear el usuario: ${err}` })
+
+        return res.status(200).send({ token: service.createToken(user) })
+    })
+}*/
+
+
+function signin(req, res) {
+    user.findone({ correo: req.body.correo }, (err, user) => {
+        if (err) return res.status(500).send({ message: err })
+        if (!user) return res.status(404).send({ message: 'No existe el usuario' })
+
+        req.user = user
+        res.status(200).send({
+            message: 'Bienvenido',
+            token: service.createToken(user)
+        })
+    })
+}
+
+
 const getUser = (req, res) => {
     User.find({}, (err, User) => {
         if (err) {
@@ -72,5 +99,6 @@ module.exports = {
     getUser,
     getSpecificUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    signin
 }
