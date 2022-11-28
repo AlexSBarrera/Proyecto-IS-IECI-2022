@@ -4,56 +4,24 @@ const Maquina = require('../models/maquina');
 // CRUD Maquinas
 
 const createMaquina = (req, res) => {
-    try {
-        const { number, tipo,serie,marca,capacidad,observaciones,usohoras } = req.body;
-        const newMaquina = new Maquina({
-            number,
-            tipo,
-            serie,
-            marca,
-            capacidad,
-            observaciones,
-            usohoras
-        });
-        if(!number) {
-            res.status(403)
-            res.send('No se ha especificado el numero de maquina')
+    const { number, tipo,serie,marca,capacidad,observaciones,usohoras } = req.body;
+    const newMaquina = new Maquina({
+        number,
+        tipo,
+        serie,
+        marca,
+        capacidad,
+        observaciones,
+        usohoras
+    });
+    newMaquina.save((err, Maquina) => {
+        if (err) {
+            console.log(err);//testeo recuerda borrar
+            return res.status(400).send({ message: "Error al crear la Maquina" })
         }
-        if(!tipo) {
-            res.status(403)
-            res.send('No se ha especificado el tipo de maquina')
-        }
-        if(!serie) {
-            res.status(403)
-            res.send('No se ha especificado la serie de maquina')
-        }
-        if(!marca) {
-            res.status(403)
-            res.send('No se ha especificado la marca de maquina')
-        }
-        if(!capacidad || capacidad < 0) {
-            res.status(403)
-            res.send('No se ha especificado la capacidad de maquina o es negativa')
-        }
-        if(usohoras < 0) {
-            res.status(403)
-            res.send('El uso de horas no puede ser negativo')
-        }
-
-        newMaquina.save((err, Maquina) => {
-            if (err) {
-                console.log(err);//testeo recuerda borrar
-                return res.status(400).send({ message: "Error al crear la Maquina" })
-            }
-            return res.status(201).send(Maquina)
-        })
-    } catch (err) {
-        res.status(500)
-        res.send(err)
-    }
-}    
-
-
+        return res.status(201).send(Maquina)
+    })
+}
 const getMaquina = (req, res) => {
     Maquina.find({}, (err, Maquina) => {
         if (err) {
