@@ -5,9 +5,6 @@ const TipomaquinaSchema = new Schema({
         type: String,
         required: true
     },
-    capacidad: {
-        type: Number
-    },
     precio: {
         type: Number,
         required :true
