@@ -7,6 +7,10 @@ const TipomaquinaSchema = new Schema({
     },
     capacidad: {
         type: Number
+    },
+    precio: {
+        type: Number,
+        required :true
     }
 })
 

@@ -7,8 +7,6 @@ const Horario = require('../models/horario');
 const createHorario = async (req, res) => {
     const { dia, inicio, Maquina, status, user } = req.body;
     const final = parseInt(req.body.inicio) + 1
-    console.log("ini:",req.body.inicio);//testeo recuerda borrar
-    console.log("fin:",final);//testeo recuerda borrar
     const newHorario = new Horario({
         dia,
         inicio,
@@ -17,12 +15,6 @@ const createHorario = async (req, res) => {
         status,
         user
     });
-    //
-    console.log("Json:",newHorario);//testeo recuerda borrar
-    console.log("dia:",req.body.dia);//testeo recuerda borrar
-    console.log("ini:",req.body.inicio);//testeo recuerda borrar
-    console.log("req:",req.body);//testeo recuerda borrar
-
 
     await newHorario.save((err, Horario) => {
         if (err) {

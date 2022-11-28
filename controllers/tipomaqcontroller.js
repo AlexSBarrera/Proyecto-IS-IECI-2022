@@ -3,9 +3,12 @@ const TipoMaquina = require('../models/tipomaquina');
 // CRUD Tipo Maquina
 
 const createTipoMaquina = (req, res) => {
-    const {tipo} = req.body;
+    const {tipo, capacidad, precio} = req.body;
     const newTipoMaquina = new TipoMaquina({
-            tipo
+            tipo,
+            capacidad,
+            precio
+
     });
     newTipoMaquina.save((err, TipoMaquina) => {
         if (err) {

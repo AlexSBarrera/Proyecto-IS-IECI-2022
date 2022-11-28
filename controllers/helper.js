@@ -1,58 +1,12 @@
 const mongoose = require('mongoose');
 const Horario = require('../models/horario');
-const reghora = require('../models/reghora');
 const Maquina = mongoose.model('Maquina');
+const Tipomaquina= mongoose.model('Tipomaquina');
 const User = mongoose.model('user');
 const RegHora = mongoose.model('RegHora');
 
 // TRABAJO PENDIENTE !!!
 // NO UTILIZAR AUN !!!
-
-
-// FUNCION OBSOLETA!! SOLO REFERENCIA!!
-function sumUser(iduser,uso){
-    User.findById(iduser,(err,us) =>{
-    if (err) {
-            console.log(err);//testeo recuerda borrar
-            return res.status(400).send({ message: "Error al obtener la Maquina" })
-        }
-    if (!us) {
-            console.log(err);//testeo recuerda borrar
-            return res.status(404).send({ message: "Maquina no encontrado" })
-        }
-        console.log(err);//testeo recuerda borrar
-        const  difu  = 12 - us.HorasUso;
-        const hou = (uso - difu);
-        console.log("difu :",difu);//testeo recuerda borrar
-
-        //suma lo correspondiente a user (recuerda diferenciar las horas por tipo de maquina)
-        console.log("hou :",hou);
-            if (difu < uso) {
-                User.findByIdAndUpdate(iduser,{$inc:{ HorasUso : difu, HorasExtra : hou  }},(err,us) =>{
-                    if (err) {
-                        return res.status(400).send({ message: "Error al obtener el Usuario" })
-                    }
-                    if (!us) {
-                        return res.status(404).send({ message: "Usuario no encontrado" })
-                    }
-                    console.log(err);
-                    return console.log("0k")//testeo recuerda borrar
-                })
-            }
-                User.findByIdAndUpdate(iduser,{$inc:{ HorasUso : uso} },(err,us) =>{
-                    if (err) {
-                        return res.status(400).send({ message: "Error al obtener el Usuario" })
-                    }
-                    if (!us) {
-                        return res.status(404).send({ message: "Usuario no encontrado" })
-                    }
-                    return console.log("0k")//testeo recuerda borrar
-                }
-                )
-            return console.log("0k user")//testeo recuerda borrar
-    })
-}
-// FUNCION OBSOLETA!! SOLO REFERENCIA!!
 
 //sum horas
 
@@ -345,12 +299,74 @@ const deshaHorario = async (req, res) => {
         return res.status(404).send({ message: "Sin Horario" })
     })
 }
+// !!! Cuarentena !!!
+// Suma precio
 
+function getprecio (tipo){
+    console.log("tipo f :",tipo);
+    let p = Tipomaquina.findById(tipo).exec((err, regi) => {
+    if (err) {
+        return res.status(400).send({ message: "Error al Tipo" })
+    }
+    if(!regi){
+        return res.status(404).send(regi)
+    }
+    console.log("pre f1",regi.precio);
+    let p =regi.precio;
+    console.log("pre f2",p);
+    return p;
+    })
+    return p;
+};
+
+const sumaHorario =  (req,res) => {
+
+    const ida  = req.params.id;
+    let registro =  RegHora.find({"user": ida},{"tipo":1,"Horas": 1},(err, regi) => {
+        if (err) {
+            return res.status(400).send({ message: "Error al Registro S" })
+        }
+        if(!regi){
+            return res.status(404).send(regi)
+        }
+        console.log("Re ",regi);
+        return regi
+    })
+    let tipoh = Object.parse(registro);
+    let tipos = [];
+    console.log("Re 1",registro);
+    console.log("ida",ida);
+    console.log("tipoh ",tipoh);
+    console.log("tipos ",tipos);
+    tipoh.forEach(function (reg) {
+        console.log("ida",ida);
+        let hor = reg.Horas;
+        let pr = Tipomaquina.findById(reg.tipo).exec((err, regi) => {
+            if (err) {
+                return res.status(400).send({ message: "Error al Tipo" })
+            }
+            if(!regi){
+                return res.status(404).send(regi)
+            }
+            console.log("pre f1",regi.precio);
+            let p =regi.precio;
+            console.log("pre f2",p);
+            return p;
+            })
+        console.log("pre ? :",pr);
+        console.log("hor",hor);
+        tipos.push(pr*hor);
+    });
+return res.status(418).send(registro)//.send({ message: "Suma?" })
+}
+
+// !!! Cuarentena !!!
 
 
 module.exports = {
     reserveHorario,
     cancelHorario,
     deshaHorario
+   /// sumaHorario
 }
 
