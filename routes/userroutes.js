@@ -6,8 +6,9 @@ const auth = require('../middlewares/auth');
 api.post('/user/create', usercontroller.createUser);
 api.get('/user/get', usercontroller.getUser);
 api.get('/user/search/:id', usercontroller.getSpecificUser);
-api.put('/user/update/:id', usercontroller.updateUser);
-api.delete('/user/delete/:id', usercontroller.deleteUser);
+api.put('/user/update/:id', auth, usercontroller.updateUser);
+api.delete('/user/delete/:id', auth, usercontroller.deleteUser);
+api.post('/user/login', usercontroller.signin);
 api.get('/private', auth, function(req, res) {
     res.status(200).send({ message: 'Acceso concedido' });
 });
