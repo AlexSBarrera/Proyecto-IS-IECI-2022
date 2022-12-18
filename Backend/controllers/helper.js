@@ -5,17 +5,12 @@ const Tipomaquina= mongoose.model('Tipomaquina');
 const User = mongoose.model('user');
 const RegHora = mongoose.model('RegHora');
 
-// TRABAJO PENDIENTE !!!
-// NO UTILIZAR AUN !!!
-
 //sum horas
 
 //reservar hora
 // falta verificacion user
 const reserveHorario = async(req, res) => {
-    console.log("params :",req.params);//testeo recuerda borrar
-    console.log("params.id :",req.params.id);//testeo recuerda borrar
-    console.log("params.uid :",req.params.uid);//testeo recuerda borrar
+
     const ida  = req.params.id;
     Horario.findById(ida).populate({ path: 'Maquina' }).populate({path: 'user'}).exec((err, Ho) => {
         if (err) {
@@ -28,25 +23,11 @@ const reserveHorario = async(req, res) => {
         console.log("inicio :",Ho.status);//testeo recuerda borrar
         if(Ho.status == "Libre"){
 
-            //test start
-            console.log("entra");//testeo recuerda borrar
-            console.log("ho :",Ho);//testeo recuerda borrar
-            console.log("maq.id :",Ho.Maquina.id);//testeo recuerda borrar
-            console.log("idtipo :",Ho.Maquina.tipo);//testeo recuerda borrar
-            console.log("final :",Ho.final);//testeo recuerda borrar
-            console.log("inicio :",Ho.inicio);//testeo recuerda borrar
-            //test end
-
             const  idmaq  = Ho.Maquina.id;
             const  iduser  = req.params.uid;
             const  idtipo  = Ho.Maquina.tipo;
             let uso = Ho.final - Ho.inicio
 
-            //test start
-            console.log("maq.id :",iduser);//testeo recuerda borrar
-            console.log("idtipo :",idtipo);//testeo recuerda borrar
-            console.log("uso :",uso);//testeo recuerda borrar
-            //test end
 
         // suma horas a Maquina
         Maquina.findByIdAndUpdate(idmaq,{$inc:{ usohoras : uso} },(err,maq) =>{
@@ -73,6 +54,7 @@ const reserveHorario = async(req, res) => {
                 console.log(err);//testeo recuerda borrar
                 console.log("0k User")//testeo recuerda borrar
             })
+            // suma horas a Registro
             RegHora.findOneAndUpdate({user : iduser , tipo : idtipo },{ $inc:{ Horas : uso}}, (err,Reg) =>{
                 if (err) {
                     console.log(err);//testeo recuerda borrar
