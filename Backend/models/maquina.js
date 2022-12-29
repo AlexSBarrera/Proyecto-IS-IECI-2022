@@ -18,7 +18,8 @@ const maquinaSchema = new Schema({
         type: String
     },
     capacidad: {
-        type: Number
+        type: Number,
+        ref : 'Tipomaquina'
     },
     observaciones: {
         type: String

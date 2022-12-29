@@ -1,33 +1,21 @@
-const { prependListener, prependOnceListener } = require('../models/tipomaquina');
 const TipoMaquina = require('../models/tipomaquina');
 
 // CRUD Tipo Maquina
 
 const createTipoMaquina = (req, res) => {
-    try{
-        const {tipo,precio} = req.body;
-        const newTipoMaquina = new TipoMaquina({
-                tipo, precio
-        });
-        if(!tipo) {
-            res.status(403)
-            res.send('No se ha especificado el tipo de maquina')
-        }
-        if(!precio || precio < 0) {
-            res.status(403)
-            res.send('No se ha especificado el precio de maquina o es negativo')
-        }
+    const {tipo, capacidad, precio} = req.body;
+    const newTipoMaquina = new TipoMaquina({
+            tipo,
+            capacidad,
+            precio
 
-        newTipoMaquina.save((err, TipoMaquina) => {
-            if (err) {
-                return res.status(400).send({ message: "Error al crear el tipo de Maquina" })
-            }
-            return res.status(201).send(TipoMaquina)
-        })
-    } catch (err) {
-        res.status(500)
-        res.send(err)
-    }
+    });
+    newTipoMaquina.save((err, TipoMaquina) => {
+        if (err) {
+            return res.status(400).send({ message: "Error al crear el tipo de Maquina" })
+        }
+        return res.status(201).send(TipoMaquina)
+    })
 }
 const getTipoMaquina = (req, res) => {
     TipoMaquina.find({}, (err, TipoMaquina) => {
