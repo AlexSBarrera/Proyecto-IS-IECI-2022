@@ -1,53 +1,110 @@
-const MsmBoard = require('../models/MsmBoard');
 const User = require('../models/user');
-const nodeMailer = require('nodemailer');
+const nodemailer = require('nodemailer');
+const msmBoard = require('../models/msmBoard');
 
-app.getMessage = (req, res) => {
-    var message = new Message(req.body);
-    message.save((err) =>{
-      if(err)
-        sendStatus(500);
-      res.sendStatus(200);
+async function obtenerCorreos(){
+    const MongoClient = require('mongodb').MongoClient;
+    const uri = "mongodb+srv://mongoieci:admin123@mongoieci.bfeqsg1.mongodb.net/test";
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+    
+    let correos = [];
+    client.connect(err => {
+        const collection = client.db("test").collection("users");
+        collection.findOne({}).then(doc => {
+            correos.push(doc.correo);
+            client.close();
+        });
+    });
+    return correos;
+}
+
+const getAvisos = (req, res) => {
+    msmBoard.find((err, msmBoard) => {
+        if (err) {
+            return res.status(400).send({ message: "Error al obtener los avisos" })
+        }
+        return res.status(200).send(msmBoard);
     })
 }
 
-app.CreateMessage = (req, res) => {
-    const {Message, Date} = req.body;
-    const newMsm = new Message({
-        Message,
-        Date
-    });
-    newMsm.save((err, MsmBoard) => {
+const deleteAviso = (req, res) => {
+    const { id } = req.params;
+    msmBoard.findByIdAndDelete(id, (err, msmBoard) => {
         if (err) {
-            return res.status(400).send({ message: "El Post no se ha podido crear" })
+            return res.status(400).send({ message: "No se pudo eliminar el aviso" })
         }
-        return res.status(201).send(MsmBoard)
-    });
+        if (!msmBoard) {
+            return res.status(404).send({ message: "aviso no encontrado" })
+        }
+        return res.status(200).send(msmBoard);
+    })
 }
 
-app.postEmail = (req, res) => {
-    const {name, email, message} = req.body;
-    var transporter = nodeMailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        auth: {
-            user: "rafaela.grady74@ethereal.email",
-            pass: "8Yk9dseMmvhA5yEReC"
+const crearAviso = (req, res) => {
+    const { titulo, mensaje, fecha } = req.body;
+    const newAviso = new msmBoard({
+        titulo,
+        mensaje,
+        fecha: Date.now()
+    })
+    newAviso.save((err, msmBoard) => {
+        if (err) {
+            return res.status(400).send({ message: "Error al crear el Aviso" })
         }
-    });
-    var mailOptions = {
-        from: "Remitente",
-        to: "Benjacaniu47@gmail.com",
-        subject: "Correo de prueba",
-        text: "Hola mundo"
+        return res.status(201).send(msmBoard);
+        console.log("");
+    })
+}
+
+const updateAviso = (req, res) => {
+    const { id } = req.params;
+    const { titulo, mensaje, fecha } = req.body;
+    const updateAviso = {
+        titulo,
+        mensaje,
+        fecha: Date.now()
     }
+    msmBoard.findByIdAndUpdate(id, updateAviso, (err, msmBoard) => {
+        if (err) {
+            return res.status(400).send({ message: "No se pudo actualizar el aviso" })
+        }
+        if (!msmBoard) {
+            return res.status(404).send({ message: "aviso no encontrado" })
+        }
+        return res.status(200).send(msmBoard);
+    })
+}
+
+const postEmail = async(req, res) => {
+    const correos = await obtenerCorreos();
+    const emails = correos.map(correo => correo.email);
+    const transporter = nodemailer.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    auth: {
+        user: 'rubye.feil56@ethereal.email',
+        pass: 'Gma47HEBHRkAUS7TNa'
+    }
+    });
+    const mailOptions = {
+        from: 'elody.schimmel@ethereal.email',
+        to: "example@mail.com", 
+        subject: "Hello",
+        text: "Hello world",
+    };
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
-            res.status(500).send(error.message);
+            console.log(error);
         } else {
-            console.log("Email enviado");
-            res.status(200).jsonp(req.body);
+            console.log('Email sent: ' + info.response);
         }
     });
+    res.send("Email enviado");
+}
+
+module.exports = {
+    getAvisos,
+    crearAviso,
+    postEmail,
+    deleteAviso
 }
