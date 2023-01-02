@@ -4,6 +4,8 @@ const horariocontroller = require('../controllers/horariocontroller');
 
 api.post('/horario/create', horariocontroller.createHorario);
 api.get('/horario/get', horariocontroller.getHorario);
+api.get('/horario/getlib', horariocontroller.getHorariolib);
+api.get('/horario/getUs', horariocontroller.getHorarioUs);
 api.get('/horario/search/:id', horariocontroller.getSpecificHorario);
 api.put('/horario/update/:id', horariocontroller.updateHorario);
 api.delete('/horario/delete/:id', horariocontroller.deleteHorario);

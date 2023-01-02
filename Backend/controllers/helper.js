@@ -20,7 +20,7 @@ const reserveHorario = async(req, res) => {
             return res.status(404).send({ message: "Horario no encontrada" })
         }
 
-        if(Ho.status == "Libre"){
+        if(Ho.status == "Libre" && Ho.Maquina.id !== null){
 
             const  idmaq  = Ho.Maquina.id;
             const  iduser  = req.params.uid;
@@ -223,7 +223,7 @@ const deshaHorario = async (req, res) => {
             })
             }
 
-        Horario.findByIdAndUpdate(ida,{status : "Deshabilitado"},(err,Ho) =>{
+        Horario.findByIdAndUpdate(ida,{status : "Deshabilitado", user : null },(err,Ho) =>{
             if (err) {
                 return res.status(400).send({ message: "Error al obtener la Maquina" })
             }
