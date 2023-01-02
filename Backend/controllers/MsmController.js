@@ -1,22 +1,8 @@
 const User = require('../models/user');
 const nodemailer = require('nodemailer');
 const msmBoard = require('../models/msmBoard');
-
-async function obtenerCorreos(){
-    const MongoClient = require('mongodb').MongoClient;
-    const uri = "mongodb+srv://mongoieci:admin123@mongoieci.bfeqsg1.mongodb.net/test";
-    const client = new MongoClient(uri, { useUnifiedTopology: true });
-    
-    let correos = [];
-    client.connect(err => {
-        const collection = client.db("test").collection("users");
-        collection.findOne({}).then(doc => {
-            correos.push(doc.correo);
-            client.close();
-        });
-    });
-    return correos;
-}
+const user = require('../models/user');
+const { findById } = require('../models/user');
 
 const getAvisos = (req, res) => {
     msmBoard.find((err, msmBoard) => {
@@ -41,6 +27,7 @@ const deleteAviso = (req, res) => {
 }
 
 const crearAviso = (req, res) => {
+    console.log("creando aviso");
     const { titulo, mensaje, fecha } = req.body;
     const newAviso = new msmBoard({
         titulo,
@@ -51,8 +38,8 @@ const crearAviso = (req, res) => {
         if (err) {
             return res.status(400).send({ message: "Error al crear el Aviso" })
         }
-        return res.status(201).send(msmBoard);
-        console.log("");
+        return res.status(201).send(msmBoard) && res.postEmail();
+        console.log("Aviso creado");
     })
 }
 
@@ -76,35 +63,46 @@ const updateAviso = (req, res) => {
 }
 
 const postEmail = async(req, res) => {
-    const correos = await obtenerCorreos();
-    const emails = correos.map(correo => correo.email);
-    const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
-        user: 'rubye.feil56@ethereal.email',
-        pass: 'Gma47HEBHRkAUS7TNa'
-    }
+    
+    const MongoClient = require('mongodb').MongoClient;
+    const uri = "mongodb+srv://mongoieci:admin123@mongoieci.bfeqsg1.mongodb.net/test";
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+    let correos = [];
+    client.connect(err => {
+        const collection = client.db("test").collection("users");
+        users = collection.find({}, { email: 1 }).toArray((err, users) => {
+            correos = users.map(user => user.correo);
+            client.close();
+            const transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
+                auth: {
+                    user: "grupo14ingenierias@gmail.com",
+                    pass: "mqnkstmymrnhgswl"
+                }
+                });
+                const mailOptions = {
+                    from: 'elody.schimmel@ethereal.email',
+                    to: correos.join(","),
+                    subject: titulo,
+                    text: mensaje,
+                };
+                transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
+        });
     });
-    const mailOptions = {
-        from: 'elody.schimmel@ethereal.email',
-        to: "example@mail.com", 
-        subject: "Hello",
-        text: "Hello world",
-    };
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-    res.send("Email enviado");
+    client.close();
 }
 
 module.exports = {
     getAvisos,
     crearAviso,
     postEmail,
-    deleteAviso
+    deleteAviso,
+    updateAviso
 }
