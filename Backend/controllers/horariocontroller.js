@@ -53,7 +53,7 @@ const getHorarioUs = (req, res) => {
 
 const getSpecificHorario = (req, res) => {
     const  id  = req.params.id;
-    Horario.findById(id).populate({ path: 'Maquina' }).populate({path: 'user'}).exec((err, Horario) => {
+    Horario.findById(id).populate( 'Maquina, user').exec((err, Horario) => {
         if (err) {
             console.log(err);
             return res.status(400).send({ message: "Error al obtener el Horario" })

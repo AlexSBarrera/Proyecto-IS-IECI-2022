@@ -10,7 +10,7 @@ const reghoraroutes = require("./routes/reghoraroutes");
 const horarioroutes = require("./routes/horarioroutes");
 const userroutes = require("./routes/userroutes");
 const helperroutes = require("./routes/helperroutes");
-//const socketio = require('socket.io');
+const MsmBoardRoutes = require("./routes/MsmBoardRoutes");
 
 app.use(cors())
 app.use(express.json());
@@ -21,17 +21,7 @@ app.use('/api', reghoraroutes);
 app.use('/api', horarioroutes);
 app.use('/api', userroutes);
 app.use('/api', helperroutes);
-
-/*
-io.on('connection', socket => {
-    console.log('Nuevo cliente conectado!');
-
-    socket.on('chat', (message) => {
-        io.emit('chat', message);
-    });
-
-});
-*/
+app.use('/api', MsmBoardRoutes);
 
 
 app.listen(process.env.PORT, () => {
