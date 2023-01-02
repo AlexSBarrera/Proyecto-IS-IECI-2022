@@ -42,6 +42,15 @@ const getHorariolib = (req, res) => {
     })
 }
 
+const getHorarioUs = (req, res) => {
+    Horario.find({status: req.id },(err, Horario) => {
+        if (err) {
+            return res.status(400).send({ message: "Error al obtener el Horario" })
+        }
+        return res.status(200).send(Horario)
+    })
+}
+
 const getSpecificHorario = (req, res) => {
     const  id  = req.params.id;
     Horario.findById(id).populate({ path: 'Maquina' }).populate({path: 'user'}).exec((err, Horario) => {
@@ -89,6 +98,7 @@ module.exports = {
     getHorario,
     getHorariolib,
     getSpecificHorario,
+    getHorarioUs,
     updateHorario,
     deleteHorario,
 }

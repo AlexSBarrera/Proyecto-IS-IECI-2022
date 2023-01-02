@@ -11,8 +11,15 @@ const sendReserv = async(horario, user) =>{
     return response
 
 }
+const sendCancel = async(horario, user) =>{
+    console.log(process.env.SERVIDOR,"/horario/getlib/",horario,"/",user)
+    const response = await axios.put(`${process.env.SERVIDOR}/helper/Cancel/${horario}/${user}`)
+    return response
+
+}
 
 module.exports ={
     gethorarios,
-    sendReserv
+    sendReserv,
+    sendCancel
 }
