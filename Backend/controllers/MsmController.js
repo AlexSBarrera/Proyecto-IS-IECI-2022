@@ -3,8 +3,9 @@ const nodemailer = require('nodemailer');
 const msmBoard = require('../models/msmBoard');
 const user = require('../models/user');
 const { findById } = require('../models/user');
+import axios from 'axios';
 
-const getAvisos = (req, res) => {
+const getAvisos = async(req, res) => {
     msmBoard.find((err, msmBoard) => {
         if (err) {
             return res.status(400).send({ message: "Error al obtener los avisos" })
@@ -27,7 +28,6 @@ const deleteAviso = (req, res) => {
 }
 
 const crearAviso = (req, res) => {
-    console.log("creando aviso");
     const { titulo, mensaje, fecha } = req.body;
     const newAviso = new msmBoard({
         titulo,
@@ -38,8 +38,8 @@ const crearAviso = (req, res) => {
         if (err) {
             return res.status(400).send({ message: "Error al crear el Aviso" })
         }
-        return res.status(201).send(msmBoard) && res.postEmail();
-        console.log("Aviso creado");
+        return res.status(201).send(msmBoard);
+        return (titulo, mensaje)
     })
 }
 
@@ -63,7 +63,7 @@ const updateAviso = (req, res) => {
 }
 
 const postEmail = async(req, res) => {
-    
+    const { titulo, mensaje } = req.body;
     const MongoClient = require('mongodb').MongoClient;
     const uri = "mongodb+srv://mongoieci:admin123@mongoieci.bfeqsg1.mongodb.net/test";
     const client = new MongoClient(uri, { useUnifiedTopology: true });
