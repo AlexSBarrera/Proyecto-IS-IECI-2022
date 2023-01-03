@@ -3,7 +3,6 @@ const nodemailer = require('nodemailer');
 const msmBoard = require('../models/msmBoard');
 const user = require('../models/user');
 const { findById } = require('../models/user');
-import axios from 'axios';
 
 const getAvisos = async(req, res) => {
     msmBoard.find((err, msmBoard) => {
