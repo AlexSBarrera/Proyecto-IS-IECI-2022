@@ -1,6 +1,6 @@
 import {React, useState} from 'react'
 import { Container, Stack, Button, Heading} from '@chakra-ui/react'
-import {updateMaquina, getSpecificMaquina } from '../../data/maquinas'
+import {updateMaquina, getSpecificMaquina } from '../../Data/maquinas'
 import Inputform from '../../components/Inputform'
 import Textareainput from '../../components/Textareainput'
 import { useRouter } from 'next/router'

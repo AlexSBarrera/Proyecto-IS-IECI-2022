@@ -1,6 +1,6 @@
 import {React, useEffect, useState} from 'react'
 import { Container, Heading, Table, Thead, Tr, Td, Tbody, Button, Stack} from '@chakra-ui/react'
-import {gettipoMaquina} from '../data/Tipomaq'
+import {gettipoMaquina} from '../Data/Tipomaq'
 import {useRouter} from 'next/router'
 
 
