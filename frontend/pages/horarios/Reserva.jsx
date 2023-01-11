@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import {Select,Container,Heading,HStack,Input,Stack,Table,Th,Tr,Td, Thead, Tbody, Button, FormControl, FormLabel } from '@chakra-ui/react'
-import {gethorarios,sendReserv} from '../../Data/horario'
+import {Select,Container,Heading,Input,Stack,Table,Tr,Td, Thead, Tbody, Button, FormControl, FormLabel } from '@chakra-ui/react'
+import {gethorariosAll,sendReserv} from '../../Data/horario'
+import {getusers} from '../../Data/usuario'
 import router from 'next/router'
 
 const Reserva = () => {
@@ -12,6 +13,14 @@ const Reserva = () => {
     maquina:'',
     user:'',
     status:''
+  }])
+
+  const [users, setusers] = useState ([{
+    name:'',
+    HorasUso: 0,
+    HorasExtra: 0,
+    correo:'',
+    rol:''
   }])
 
   const [request, setrequest] = useState ([{
@@ -35,7 +44,10 @@ const Reserva = () => {
 		}
 
 
-    useEffect(() => {gethorarios().then(res =>{sethorario(res.data)})
+    useEffect(() => {gethorariosAll().then(res =>{sethorario(res.data)})
+    }, [])
+
+    useEffect(() => {getusers().then(res =>{setusers(res.data)})
     }, [])
 
   const horTable =()=>{
@@ -56,6 +68,14 @@ const Reserva = () => {
     return horarios.map(horario=>{
       return(
         <option key={horario._id} value={horario._id}>{horario.inicio}:00 hrs -{horario.final}:00 hrs {horario.dia}</option>
+      )
+    })
+  }
+
+  const userSel =()=>{
+    return users.map(users=>{
+      return(
+        <option key={users._id} value={users._id}>{users.name}</option>
       )
     })
   }
@@ -98,7 +118,7 @@ const Reserva = () => {
                         Actualizar Horario
                         </Button>
                         <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Delete')}>
-                        Barrera Horario
+                        Borrar Horario
                         </Button>
                     </div>
                     }
@@ -129,11 +149,14 @@ const Reserva = () => {
       <Heading as="h2" size="md" textAlign="center" mt="10">Seleccione su Horario a reservar</Heading>
       <FormControl>
         <FormLabel>Horario</FormLabel>
-            <Select placeholder='Horario' name="id" onChange={handleChange}>
+            <Select  placeholder='Horario' name="id" onChange={handleChange}>
             {horSel()}
           </Select>
+
           <FormLabel>Usuario</FormLabel>
-          <Input placeholder="Usuario" name="user" type= "text" onChange={handleChange}/>
+            <Select placeholder='Usuario' name="user" onChange={handleChange}>
+            {userSel()}
+          </Select>
           <Button mt={4} type="submit" onClick = {onSubmit}>Reservar</Button>
       </FormControl>
       <Button colorScheme="green" variant="link" size="md"  onClick={()=> router.push('../../')}>Volver</Button>

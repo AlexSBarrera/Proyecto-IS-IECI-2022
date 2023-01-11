@@ -1,9 +1,26 @@
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import {Select,Container,Heading,HStack,Input,Stack,Table,Th,Tr,Td, Thead, Tbody, Button, FormControl, FormLabel } from '@chakra-ui/react'
-import {sendCancel} from '../../Data/horario'
+import {sendCancel,gethorariosAll} from '../../Data/horario'
+import {getusers} from '../../Data/usuario'
 import router from 'next/router'
 
 const Cancel = () => {
+  const [horarios, sethorario] = useState ([{
+    dia:'',
+    inicio: '',
+    final: '',
+    maquina:'',
+    user:'',
+    status:''
+  }])
+
+  const [users, setusers] = useState ([{
+    name:'',
+    HorasUso: 0,
+    HorasExtra: 0,
+    correo:'',
+    rol:''
+  }])
 
   const [request, setrequest] = useState([{
     id:'',
@@ -20,10 +37,32 @@ const Cancel = () => {
     console.log ("user = ",request.user)
 	}
 
+  useEffect(() => {gethorariosAll().then(res =>{sethorario(res.data)})
+}, [])
+
+useEffect(() => {getusers().then(res =>{setusers(res.data)})
+}, [])
+
 	const onSubmit = async (e) => {
 		e.preventDefault()
 	  await sendCancel( request.id, request.user)
 		}
+
+    const horSel =()=>{
+      return horarios.map(horario=>{
+        return(
+          <option key={horario._id} value={horario._id}>{horario.inicio}:00 hrs -{horario.final}:00 hrs {horario.dia} - {horario.status}</option>
+        )
+      })
+    }
+  
+    const userSel =()=>{
+      return users.map(users=>{
+        return(
+          <option key={users._id} value={users._id}>{users.name}</option>
+        )
+      })
+    }
 
   const [open, setOpen] = useState(false);
 
@@ -57,6 +96,15 @@ const Cancel = () => {
                         <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Cancel')}>
                         Cancela Horario
                         </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Create')}>
+                        Crear Horario
+                        </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Update')}>
+                        Actualizar Horario
+                        </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Delete')}>
+                        Borrar Horario
+                        </Button>
                     </div>
                     }
                 </div>
@@ -66,10 +114,15 @@ const Cancel = () => {
       <Heading as="h2" size="md" textAlign="center" mt="10">Ingrese el Horario a Cancelar</Heading>
       <FormControl>
         <FormLabel>Horario</FormLabel>
-        <Input placeholder="Horario" name="id" type= "text" onChange={handleChange}/>
+            <Select  placeholder='Horario' name="id" onChange={handleChange}>
+            {horSel()}
+          </Select>
+
           <FormLabel>Usuario</FormLabel>
-        <Input placeholder="Usuario" name="user" type= "text" onChange={handleChange}/>
-        <Button mt={4}  type="submit" onClick = {onSubmit}>Cancelar</Button>
+            <Select placeholder='Usuario' name="user" onChange={handleChange}>
+            {userSel()}
+          </Select>
+          <Button mt={4} type="submit" onClick = {onSubmit}>Cancelar</Button>
       </FormControl>
       <Button colorScheme="green" variant="link" size="md"  onClick={()=> router.push('../../')}>Volver</Button>
       </Container>

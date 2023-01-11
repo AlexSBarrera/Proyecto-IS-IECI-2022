@@ -8,6 +8,14 @@ const gethorarios = async()=>{try {
     return null
 }
 }
+const gethorariosAll = async()=>{try {
+    const response = await axios.get(`${process.env.SERVIDOR}/horario/get`)
+    return response
+} catch (error) {
+    console.log("failed",error)
+    return null
+}
+}
 const postHorario = async(horario) =>{try {
     console.log(process.env.SERVIDOR,"/horario/create", horario)
     const response = await axios.post(`${process.env.SERVIDOR}/horario/create`, horario)
@@ -19,7 +27,8 @@ const postHorario = async(horario) =>{try {
 }
 const updHorario = async(horario) =>{try {
     console.log(process.env.SERVIDOR,"/horario/create", horario)
-    const response = await axios.put(`${process.env.SERVIDOR}/horario/create`, horario)
+    console.log("sucess")
+    const response = await axios.put(`${process.env.SERVIDOR}/horario/update/${horario.id}`, horario)
     return response
 } catch (error) {
     console.log("failed",error)
@@ -61,5 +70,6 @@ module.exports ={
     sendReserv,
     sendCancel,
     updHorario,
-    delHorario
+    delHorario,
+    gethorariosAll
 }

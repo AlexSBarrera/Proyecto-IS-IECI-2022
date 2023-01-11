@@ -1,9 +1,22 @@
-import {useState} from 'react'
-import {Container,Heading,Input, Button, FormControl, FormLabel } from '@chakra-ui/react'
+import {useState,useEffect} from 'react'
+import {Select,Container,Heading,Input, Button, FormControl, FormLabel } from '@chakra-ui/react'
 import {postHorario} from '../../Data/horario'
+import {getMaquina} from '../../Data/maquinas'
 import router from 'next/router'
 
 const Create = () => {
+
+  const [maquinas, setmaquina] = useState([{
+    number:'',
+    tipo:'',
+    serie:'',
+    marca:'',
+    capacidad:'',
+    observaciones:'',
+    usohoras:''
+}])
+
+
 
   const [request, setrequest] = useState([{
     dia:'',
@@ -25,6 +38,18 @@ const Create = () => {
 		e.preventDefault()
 	  await postHorario(request)
 		}
+
+    const maqSel =()=>{
+      return maquinas.map(maquina=>{
+        return(
+          <option key={maquina._id} value={maquina._id}>n°{maquina.number} - {maquina.marca} </option>
+        )
+      })
+    }
+
+    useEffect(() => {getMaquina().then(res =>{setmaquina(res.data)})
+  }, [])
+
 
   const [open, setOpen] = useState(false);
 
@@ -59,6 +84,15 @@ const Create = () => {
                         <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Cancel')}>
                         Cancela Horario
                         </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Create')}>
+                        Crear Horario
+                        </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Update')}>
+                        Actualizar Horario
+                        </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Delete')}>
+                        Borrar Horario
+                        </Button>
                     </div>
                     }
                 </div>
@@ -68,11 +102,13 @@ const Create = () => {
       <Heading as="h2" size="md" textAlign="center" mt="10">Ingrese el Horario a Crear</Heading>
       <FormControl>
           <FormLabel>Dia</FormLabel>
-        <Input placeholder="Dia" name="dia" type= "date" isRequired="true"  onChange={handleChange}/>
+        <Input placeholder="Dia" name="dia" type= "date"   onChange={handleChange}/>
           <FormLabel>Inicio</FormLabel>
-        <Input placeholder="Inicio" name="inicio" type= "text" isRequired="true" onChange={handleChange}/>
-          <FormLabel>Maquina</FormLabel>
-        <Input placeholder="Maquina" name="Maquina" type= "text" isRequired="true" onChange={handleChange}/>
+        <Input placeholder="Inicio" name="inicio" type= "text"  onChange={handleChange}/>
+        <FormLabel>Maquina</FormLabel>
+            <Select  placeholder='Maquina' name="Maquina" onChange={handleChange}>
+            {maqSel()}
+          </Select>
         <Button mt={4}  type="submit" onClick = {onSubmit}>Crear</Button>
       </FormControl>
       <Button colorScheme="green" variant="link" size="md"  onClick={()=> router.push('../../')}>Volver</Button>
