@@ -1,61 +1,69 @@
 import { useState, useEffect } from 'react';
 import {Select,Container,Heading,HStack,Input,Stack,Table,Th,Tr,Td, Thead, Tbody, Button, FormControl, FormLabel } from '@chakra-ui/react';
-import Router from 'next/router';
+import router from 'next/router';
 import Avisos from '../../Data/Avisos';
 import axios from 'axios';
+import {getAvisos} from '../../Data/Avisos';
 
 
-const crearAviso = () => {
+const CrearAviso = () => {
+    const [open, setOpen] = useState(false);
+    const [mensaje, setMensaje] = useState('');
+    const [fecha, setFecha] = useState(Date.now());
     const [titulo, setTitulo] = useState([
         {
             titulo: '',
             mensaje: '',
-            fecha: '',
         }
     ]);
-    const [Avisos, setAvisos] = useState([
-        {
-            titulo: '',
-            mensaje: '',
-            fecha: '',
-        }
-    ]);
-    const getAvisos = async() => {
-        const response = await axios.get(`${process.env.SERVIDOR}/Msmboard/getAviso`);
-        getAvisos(response.data);
-    };
-    const tableAvisos = () => {
-        return Avisos.map(Avisos => {
-            return (
-                <Tr key={Avisos._id}>
-                    <Td>{Avisos.titulo}</Td>
-                    <Td>{Avisos.mensaje}</Td>
-                    <Td>{Avisos.fecha}</Td>
-                </Tr>
-            )
-        })
-    };
-    const handleChange = (e) => {
+
+    const handleSubmit = (e) => {
         setTitulo({
             ...titulo,
             [e.target.name]: e.target.value
         })
         console.log("titulo = ", titulo.titulo);
-        console.log("mensaje = ", titulo.mensaje);
-        console.log("fecha = ", titulo.fecha);
+        console.log("mensaje = ", titulo.mensaje);   
     }
     const onSubmit = async(e) => {
         e.preventDefault()
-        await Avisos(titulo.titulo, titulo.mensaje, titulo.fecha)
+        await Avisos(titulo.titulo, titulo.mensaje)
     }
-    useEffect(() => {
-        getAvisos().then(res => {
-            setAvisos(res.data)
-        })
-    }, [])
 
     return (
         <>
+        <header style={{backgroundColor: '#00bcd4', height: '95px'}}>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Button variant="contained" color="primary" style={{backgroundColor: '#4caf50', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../Avisos/CrearAviso')}>
+                    Anuncios
+                    </Button>
+                    <Button variant="contained" color="primary" style={{backgroundColor: '#4caf50', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../Maquinas')}>
+                    Maquinas
+                    </Button>
+                    <Button onClick={() => setOpen(!open)} variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}}>
+                    Opciones Horarios
+                    </Button>
+                    { open &&
+                    <div>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Reserva')}>
+                        Reserva Horario
+                        </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Cancel')}>
+                        Cancela Horario
+                        </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Create')}>
+                        Crear Horario
+                        </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Update')}>
+                        Actualizar Horario
+                        </Button>
+                        <Button variant="contained" color="primary" style={{backgroundColor: 'black', padding: '8px 13px', borderRadius: '5px', color: '#fff'}} onClick={()=> router.push('../horarios/Delete')}>
+                        Barrera Horario
+                        </Button>
+                    </div>
+                    }
+                </div>
+            </header>
             <style>
                 {`
                     body {
@@ -63,39 +71,30 @@ const crearAviso = () => {
                     }
                 `}
             </style>
-            <header style={{backgroundColor: '#00bcd4', height: '95px'}}>
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <Button variant="contained" color="primary" style={{backgroundColor: '#4caf50', padding: '8px 13px', borderRadius: '5px', color: '#fff'}}>
-                    Anuncios 
-                    </Button>
-                    <Button variant="contained" color="primary" style={{backgroundColor: '#4caf50', padding: '8px 13px', borderRadius: '5px', color: '#fff'}}>
-                    Maquinas
-                    </Button>
-                    <Button variant="contained" color="primary" style={{backgroundColor: '#4caf50', padding: '8px 13px', borderRadius: '5px', color: '#fff'}}>
-                    Horarios
-                    </Button>
-                </div>
-            </header>
-            <Container>
-                <Heading>Avisos</Heading>
-                <Stack>
-                    <Table>
-                        <Thead>
-                            <Tr>
-                                <Th>Titulo</Th>
-                                <Th>Mensaje</Th>
-                                <Th>Fecha</Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {tableAvisos()}
-                        </Tbody>
-                    </Table>
-                </Stack>
-            </Container>
+            <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                placeholder="Titulo"
+                value={titulo}
+                onChange={e => setTitulo(e.target.value)}
+            />
+            <input
+                type="text"
+                placeholder="Mensaje"
+                value={mensaje}
+                onChange={e => setMensaje(e.target.value)}
+            />
+            <input
+                type="date"
+                placeholder="Fecha"
+                value={fecha}
+                onChange={e => setFecha(e.target.value)}
+            />
+            <button type="submit">Enviar</button>
+        </form>
         </>
 
     )
 }
 
-export default crearAviso;
+export default CrearAviso;

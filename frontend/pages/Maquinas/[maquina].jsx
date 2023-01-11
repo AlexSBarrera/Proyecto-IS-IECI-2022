@@ -1,8 +1,8 @@
 import {React, useState} from 'react'
 import { Container, Stack, Button, Heading} from '@chakra-ui/react'
 import {updateMaquina, getSpecificMaquina } from '../../data/maquinas'
-import Inputform from '../../Component/Inputform'
-import Textareainput from '../../Component/Textareainput'
+import Inputform from '../../components/Inputform'
+import Textareainput from '../../components/Textareainput'
 import { useRouter } from 'next/router'
 
 export const getServerSideProps = async (Context) => {
@@ -14,7 +14,7 @@ export const getServerSideProps = async (Context) => {
     }
 }
 
-const editar = ({ maq }) => {
+const Editar = ({ maq }) => {
     console.log(maq)
     const [maquina, setmaquina] = useState(maq)
     const router = useRouter()
@@ -51,4 +51,4 @@ const editar = ({ maq }) => {
   )
 }
 
-export default editar
+export default Editar

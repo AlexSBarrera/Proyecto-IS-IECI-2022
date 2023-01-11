@@ -1,32 +1,40 @@
-import {React, useState} from 'react'
-import { Container, Stack, Button, Heading, HStack} from '@chakra-ui/react'
-import {createtipoMaquina} from '../data/Tipomaq'
-import Inputform from '../components/Inputform'
-import {useRouter} from 'next/router'
+import {useState} from 'react'
+import {Container,Heading,HStack,Input,Stack,Table,Th,Tr,Td, Thead, Tbody, Button, FormControl, FormLabel } from '@chakra-ui/react'
+import {updHorario} from '../../Data/horario'
+import router from 'next/router'
 
-const Createtipotemaquina = () => {
-    const [tipomaquina, settipomaquina] = useState({
-        tipo:'',
-        precio:'',
-    })
-    const router = useRouter()
+const Update = () => {
 
-    const handleChange = (e) => {
-        settipomaquina({
-            ...tipomaquina,
-            [e.target.id]: e.target.value
-        })
-    }
-    const submittipomaquina = (e) => {
-        e.preventDefault()
-        createtipoMaquina(tipomaquina).then (res => {
-            console.log(res)
-        })
-    }
-    const [open, setOpen] = useState(false);
+  const [request, setrequest] = useState([{
+    _id:'',
+    dia:'',
+    inicio: 0,
+    Maquina: '',
+    status: '',
+    user:''
+
+  }])
+
+  const handleChange = (e) => {
+
+		setrequest({
+			...request,
+			[e.target.name]: e.target.value
+		})
+    console.log(request);
+	}
+
+	const onSubmit = async (e) => {
+		e.preventDefault()
+	  await updHorario(request)
+		}
+
+  const [open, setOpen] = useState(false);
+
   return (
+
     <>
-<style>
+   <style>
                 {`
                     body {
                         background: #008080;
@@ -66,20 +74,28 @@ const Createtipotemaquina = () => {
                     }
                 </div>
             </header>
-    <Container maxW="container.lg" p="15">
-        <Heading as="h1" spacing="8" p="5">Crear Nueva Maquina</Heading>
-        <Stack spacing="4" direction="column">
-            <Inputform label="Tipo" handleChange={handleChange} name="tipo" placeholder="Tipo" type="text" value={tipomaquina.tipo}/>
-            <Inputform label="Precio" handleChange={handleChange} name="precio" placeholder="Precio" type="number" value={tipomaquina.precio}/>
-            <HStack spacing="4">
-            <Button colorScheme="cyan" variant="outline" size="md" onClick={submittipomaquina}>Agregar</Button>
-            <Button colorScheme="red" variant="outline" size="md" onClick={()=> router.push('./Tipomaq')}>Cancelar</Button>
-            </HStack>
-        </Stack>
-    </Container>
-    </>
-            
+
+      <Container maxW="2xl">
+      <Heading as="h2" size="md" textAlign="center" mt="10">Ingrese el Horario a Actualizar</Heading>
+      <FormControl>
+          <FormLabel>Horario</FormLabel>
+        <Input placeholder="Horario" name="_id" type= "text" isRequired="true" onChange={handleChange}/>
+          <FormLabel>Dia</FormLabel>
+        <Input placeholder="Dia" name="dia" type= "date" onChange={handleChange}/>
+          <FormLabel>Inicio</FormLabel>
+        <Input placeholder="Inicio" name="inicio" type= "text" onChange={handleChange}/>
+          <FormLabel>Maquina</FormLabel>
+        <Input placeholder="Maquina" name="Maquina" type= "text" onChange={handleChange}/>
+          <FormLabel>Status</FormLabel>
+        <Input placeholder="Status" name="status" type= "text" onChange={handleChange}/>
+          <FormLabel>User</FormLabel>
+        <Input placeholder="User" name="user" type= "text" onChange={handleChange}/>
+        <Button mt={4}  type="submit" onClick = {onSubmit}>Actualizar</Button>
+      </FormControl>
+      <Button colorScheme="green" variant="link" size="md"  onClick={()=> router.push('../../')}>Volver</Button>
+      </Container>
+      </>
   )
 }
 
-export default Createtipotemaquina
+export default Update

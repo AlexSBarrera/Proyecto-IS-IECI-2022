@@ -1,13 +1,14 @@
 import {useState} from 'react'
-import {Select,Container,Heading,HStack,Input,Stack,Table,Th,Tr,Td, Thead, Tbody, Button, FormControl, FormLabel } from '@chakra-ui/react'
-import {sendCancel} from '../../Data/horario'
+import {Container,Heading,Input, Button, FormControl, FormLabel } from '@chakra-ui/react'
+import {postHorario} from '../../Data/horario'
 import router from 'next/router'
 
-const Cancel = () => {
+const Create = () => {
 
   const [request, setrequest] = useState([{
-    id:'',
-    user: '',
+    dia:'',
+    inicio: 0,
+    Maquina: ''
   }])
 
   const handleChange = (e) => {
@@ -15,14 +16,14 @@ const Cancel = () => {
 		setrequest({
 			...request,
 			[e.target.name]: e.target.value
+
 		})
-    console.log ("id = ",request.id)
-    console.log ("user = ",request.user)
+    console.log(request);
 	}
 
 	const onSubmit = async (e) => {
 		e.preventDefault()
-	  await sendCancel( request.id, request.user)
+	  await postHorario(request)
 		}
 
   const [open, setOpen] = useState(false);
@@ -30,13 +31,14 @@ const Cancel = () => {
   return (
 
     <>
-<style>
+    <style>
                 {`
                     body {
                         background: #008080;
                     }
                 `}
     </style>
+
 
     <header style={{backgroundColor: '#00bcd4', height: '95px'}}>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -63,13 +65,15 @@ const Cancel = () => {
             </header>
 
       <Container maxW="2xl">
-      <Heading as="h2" size="md" textAlign="center" mt="10">Ingrese el Horario a Cancelar</Heading>
+      <Heading as="h2" size="md" textAlign="center" mt="10">Ingrese el Horario a Crear</Heading>
       <FormControl>
-        <FormLabel>Horario</FormLabel>
-        <Input placeholder="Horario" name="id" type= "text" onChange={handleChange}/>
-          <FormLabel>Usuario</FormLabel>
-        <Input placeholder="Usuario" name="user" type= "text" onChange={handleChange}/>
-        <Button mt={4}  type="submit" onClick = {onSubmit}>Cancelar</Button>
+          <FormLabel>Dia</FormLabel>
+        <Input placeholder="Dia" name="dia" type= "date" isRequired="true"  onChange={handleChange}/>
+          <FormLabel>Inicio</FormLabel>
+        <Input placeholder="Inicio" name="inicio" type= "text" isRequired="true" onChange={handleChange}/>
+          <FormLabel>Maquina</FormLabel>
+        <Input placeholder="Maquina" name="Maquina" type= "text" isRequired="true" onChange={handleChange}/>
+        <Button mt={4}  type="submit" onClick = {onSubmit}>Crear</Button>
       </FormControl>
       <Button colorScheme="green" variant="link" size="md"  onClick={()=> router.push('../../')}>Volver</Button>
       </Container>
@@ -79,4 +83,4 @@ const Cancel = () => {
 
 }
 
-export default Cancel
+export default Create
