@@ -1,6 +1,6 @@
 import {React, useState} from 'react'
 import { Container, Stack, Button, Heading, HStack} from '@chakra-ui/react'
-import {createtipoMaquina} from '../data/Tipomaq'
+import {createtipoMaquina} from '../Data/Tipomaq'
 import Inputform from '../components/Inputform'
 import {useRouter} from 'next/router'
 
@@ -78,8 +78,7 @@ const Createtipotemaquina = () => {
         </Stack>
     </Container>
     </>
-            
-  )
+)
 }
 
 export default Createtipotemaquina

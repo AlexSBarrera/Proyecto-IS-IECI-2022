@@ -1,6 +1,6 @@
 import {React, useState} from 'react'
 import { Container, Stack, Button, Heading, HStack, Select} from '@chakra-ui/react'
-import {createMaquina} from '../data/maquinas'
+import {createMaquina} from '../Data/maquinas'
 import Inputform from '../components/Inputform'
 import Textareainput from '../components/Textareainput'
 import {useRouter} from 'next/router'

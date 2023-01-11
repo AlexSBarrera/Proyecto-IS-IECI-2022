@@ -1,6 +1,6 @@
 import {React, useEffect, useState} from 'react'
 import { Container, Heading, Table, Thead, Tr, Td, Tbody, Button, Stack, HStack   } from '@chakra-ui/react'
-import {getMaquina} from '../data/maquinas'
+import {getMaquina} from '../Data/maquinas'
 import {useRouter} from 'next/router'
 
 
